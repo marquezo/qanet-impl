@@ -12,25 +12,35 @@ class ResidualBlock(nn.Module):
                  seq_len=None, is_training=True, bias=True, dropout=0.0):
         super(ResidualBlock, self).__init__()
         
+        self.num_blocks = num_blocks
+        self.num_conv_layers = num_conv_layers
+        self.kernel_size = kernel_size
+        self.dropout = dropout
+        self.mask = mask
+        self.num_filters = num_filters
+        self.input_projection = input_projection
+        self.num_heads = num_heads
+        self.seq_len = seq_len
+        self.is_training = is_training
+        self.bias = bias
+        
         # Input size, output size, kernel size, stride, padding
         self.resize_convolution = nn.Conv1d(500,128,1,1,0)
         self.conv_block = ConvolutionLayer()
 
         
-    def forward(self, inputs, num_blocks, num_conv_layers, kernel_size, mask=None, 
-                   num_filters=128, input_projection=False, num_heads=8, seq_len=None,
-                  is_training=True, bias=True, dropout=0.0):
-        if input_projection:
+    def forward(self, inputs):
+        if self.input_projection:
             # with 1d convolution, we will resize input from 500 to 128
             # TODO : check how to initialize weights and bias
             inputs = self.resize_convolution(inputs)
         outputs = inputs
         sublayer = 1
-        total_sublayers = (num_conv_layers + 2) * num_blocks
-        for i in range(num_blocks):
+        total_sublayers = (self.num_conv_layers + 2) * self.num_blocks
+        for i in range(self.num_blocks):
             outputs = add_timing_signal_1d(outputs)
-            outputs, sublayer = self.conv_block.forward(outputs, num_conv_layers, kernel_size, num_filters,
-                                                        dropout=dropout, sublayers = (sublayer, total_sublayers))
+            outputs, sublayer = self.conv_block.forward(outputs, self.num_conv_layers, self.kernel_size, self.num_filters,
+                                                        dropout=self.dropout, sublayers = (sublayer, total_sublayers))
 #             Attention mecanism : TODO later
 #             Note that the Feed forward part is made here
 #             outputs, sublayer = self.self_attention_block.forward(outputs, num_filters, seq_len, mask=mask,
