@@ -9,11 +9,10 @@ import json
 random.seed(42)
 np.random.seed(42)
 
-root_project = '/home/orlandom/'
+train_path = '../datasets/train-v1.1.json'
+dev_path = '../datasets/dev-v1.1.json'
+glove_file_path = '../datasets/glove.6B.300d.txt'
 
-train_path = root_project + '/datasets/train-v1.1.json'
-dev_path = root_project + '/datasets/dev-v1.1.json'
-glove_file_path = root_project + '/Downloads/glove.6B/glove.6B.300d.txt'
 data_prefix = 'data/'
 save_path = data_prefix + 'glove.trimmed.300d.npz'
 vocab_path = data_prefix + 'vocab'
