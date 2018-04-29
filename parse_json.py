@@ -132,7 +132,7 @@ def read_write_dataset(dataset, tier, prefix, max_context_length=400):
                             an += 1
                 else:
                     num_context_skipped +=1
-                    print("Context is too long")
+                    #print("Context is too long")
 
     print("Contexts discarded because too long: {} | Question/answer pairs ignored because parsing errors: {}".format(num_context_skipped, num_errors_parsing))
     return qn, an
