@@ -1,3 +1,7 @@
+import torch
+from torch import nn
+import torch.nn.functional as F
+
 class CharacterEmbedding(nn.Module):
     
     def __init__(self, num_embeddings, embedding_dim=32, conv_out=200, 
