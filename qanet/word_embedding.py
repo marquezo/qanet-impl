@@ -8,7 +8,8 @@ class WordEmbedding(nn.Module):
     def __init__(self, word_embeddings):
         super(WordEmbedding, self).__init__()
         self.word_embedding = nn.Embedding(word_embeddings.shape[0], word_embeddings.shape[1])
-        self.word_embedding.weight = nn.Parameter(torch.from_numpy(word_embeddings))
+        #Cast to float because the character embeding will be returned as a float, and we need to concatenate the two
+        self.word_embedding.weight = nn.Parameter(torch.from_numpy(word_embeddings).float())
 
         # Only the unknown embedding requires grad
         self.word_embedding.weight.requires_grad = False

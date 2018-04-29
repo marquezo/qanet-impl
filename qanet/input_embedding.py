@@ -1,4 +1,5 @@
 import torch
+from torch import nn
 
 from qanet.word_embedding import WordEmbedding
 from qanet.character_embedding import CharacterEmbedding
@@ -6,32 +7,24 @@ from qanet.highway import Highway
 
 class InputEmbedding(nn.Module):
     
-    def __init__(self):
+    def __init__(self, embeddings, num_chars):
         super(InputEmbedding, self).__init__()
         
-        self.ContextWordEmbedding = WordEmbedding()
-        self.ContextCharacterEmbedding = CharacterEmbedding()
-
-        # TODO: parameter sharing between context and query layers?
-        
-        self.QueryWordEmbedding = WordEmbedding()
-        self.QueryCharacterEmbedding = CharacterEmbedding()
-
-        self.Highway = Highway()
+        self.wordEmbedding = WordEmbedding(embeddings)
+        self.contextCharacterEmbedding = CharacterEmbedding(num_chars)
+        self.questionCharacterEmbedding = CharacterEmbedding(num_chars)
+        self.highway = Highway()
     
-    def forward(self, context, query):
+    def forward(self, context_w, question_w, context_char, question_char):
         
-        context_word = self.ContextWordEmbedding(context)
-        context_char = self.ContextCharacterEmbedding(context)
-        
+        context_word, query_word = self.wordEmbedding(context_w, question_w)
+        context_char = self.contextCharacterEmbedding(context_char)
+        query_char = self.questionCharacterEmbedding(question_char)
+
         context = torch.cat((context_word, context_char), dim=-1 )
-        
-        query_word = self.QueryWordEmbedding(query)
-        query_char = self.QueryCharacterEmbedding(query)
-        
         query = torch.cat((query_word, query_char), dim=-1)
         
-        context = self.Highway(context)
-        query = self.Highway(query)
+        context = self.highway(context)
+        query = self.highway(query)
         
         return context, query

@@ -4,8 +4,8 @@ import torch.nn.functional as F
 class Highway(nn.Module):
     """ Version 1 : carry gate is (1 - transform gate)"""
     
-    def __init__(self, input_size):
-        super(Highway_v1, self).__init__()
+    def __init__(self, input_size=500):
+        super(Highway, self).__init__()
         
         self.transform1 = nn.Linear(in_features=input_size, out_features=input_size)
         self.fc1 = nn.Linear(in_features=input_size, out_features=input_size)
