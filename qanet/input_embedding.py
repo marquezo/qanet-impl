@@ -11,15 +11,14 @@ class InputEmbedding(nn.Module):
         super(InputEmbedding, self).__init__()
         
         self.wordEmbedding = WordEmbedding(embeddings)
-        self.contextCharacterEmbedding = CharacterEmbedding(num_chars)
-        self.questionCharacterEmbedding = CharacterEmbedding(num_chars)
+        self.characterEmbedding = CharacterEmbedding(num_chars)
         self.highway = Highway()
     
     def forward(self, context_w, question_w, context_char, question_char):
         
         context_word, query_word = self.wordEmbedding(context_w, question_w)
-        context_char = self.contextCharacterEmbedding(context_char)
-        query_char = self.questionCharacterEmbedding(question_char)
+        context_char = self.characterEmbedding(context_char)
+        query_char = self.characterEmbedding(question_char)
 
         context = torch.cat((context_word, context_char), dim=-1 )
         query = torch.cat((query_word, query_char), dim=-1)
