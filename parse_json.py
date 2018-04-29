@@ -1,19 +1,8 @@
 from __future__ import print_function
 import json
 import nltk
-import numpy as np
 import os
 from tqdm import tqdm
-import random
-import torch
-import torch.nn as nn
-from torch.utils.data import Dataset, DataLoader
-from torch.autograd import Variable
-
-
-random.seed(42)
-np.random.seed(42)
-
 
 def data_from_json(filename):
     with open(filename) as data_file:
