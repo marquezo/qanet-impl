@@ -4,14 +4,8 @@ import nltk
 import re
 from parse_json import tokenize
 from tqdm import tqdm
-
-_PAD = "<pad>"
-_UNK = "<unk>"
-
-UNK_ID = 0
-
-_START_VOCAB = [_UNK]
-
+import constants
+import json
 
 def basic_tokenizer(sentence):
     words = []
@@ -40,7 +34,7 @@ def create_vocabulary(vocabulary_path, data_paths, tokenizer=None):
                             vocab[w] += 1
                         else:
                             vocab[w] = 1
-        vocab_list = _START_VOCAB + sorted(vocab, key=vocab.get, reverse=True)
+        vocab_list = constants.START_VOCAB + sorted(vocab, key=vocab.get, reverse=True)
         print("Vocabulary size: %d" % len(vocab_list))
         with open(vocabulary_path, "w") as vocab_file:
             for w in vocab_list:
@@ -81,6 +75,9 @@ def process_glove(glove_file_path, vocab_list, save_path, size=4e5, random_init=
 
         found = 0
 
+        #Fix the padding to zero
+        glove[constants.PAD_ID, :] = np.zeros((1, glove_dim))
+
         with open(glove_file_path, 'r') as fh:
 
             for line in tqdm(fh, total=size):
@@ -112,7 +109,7 @@ def sentence_to_token_ids(sentence, vocabulary, tokenizer=None):
         words = tokenizer(sentence)
     else:
         words = basic_tokenizer(sentence)
-    return [vocabulary.get(w, UNK_ID) for w in words]
+    return [vocabulary.get(w, constants.UNK_ID) for w in words]
 
 
 def data_to_token_ids(data_path, target_path, vocabulary_path,
@@ -140,3 +137,39 @@ def data_to_token_ids(data_path, target_path, vocabulary_path,
 
                     token_ids = sentence_to_token_ids(line, vocab, tokenizer)
                     tokens_file.write(" ".join([str(tok) for tok in token_ids]) + "\n")
+
+
+def word2charix(word, char2ix, norm_word_length=16):
+    """
+    Converting a word to a list of indices representing its character
+    We truncate/pad the word to be of size 'norm_word_length'
+    We assume each word directly fed as a string
+    """
+    # splitting into list of chars
+    word = [char for char in word]
+
+    # padding / truncating each word to word_length
+    if len(word) > norm_word_length:
+        word = word[:norm_word_length]
+    elif len(word) < norm_word_length:
+        word = word + (norm_word_length - len(word)) * ['<pad>']
+
+    # converting characters to int in word list
+    word = [int(char2ix[char]) for char in word]
+
+    return word
+
+
+def create_vocab2charix_dict(vocab_file, vocab2charix_file, char2ix):
+    vocab2charix = {}
+
+    with open(vocab_file) as f:
+        for line in f:
+            line = line.strip()
+            if line in ['<pad>', '<sos>', '<unk>']:
+                continue
+
+            vocab2charix[line] = word2charix(line, char2ix)
+
+    with open(vocab2charix_file, 'w') as f:
+        json.dump(vocab2charix, f)
