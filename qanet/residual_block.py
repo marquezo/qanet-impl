@@ -26,7 +26,7 @@ class ResidualBlock(nn.Module):
         
         # Input size, output size, kernel size, stride, padding
         self.resize_convolution = nn.Conv1d(500,128,1,1,0)
-        self.conv_block = ConvolutionLayer()
+        self.conv_block = ConvolutionLayer(num_conv_layers=num_conv_layers, kernel_size=kernel_size, num_filters=num_filters)
 
         
     def forward(self, inputs):
@@ -39,8 +39,8 @@ class ResidualBlock(nn.Module):
         total_sublayers = (self.num_conv_layers + 2) * self.num_blocks
         for i in range(self.num_blocks):
             outputs = add_timing_signal_1d(outputs)
-            outputs, sublayer = self.conv_block.forward(outputs, self.num_conv_layers, self.kernel_size, self.num_filters,
-                                                        dropout=self.dropout, sublayers = (sublayer, total_sublayers))
+            outputs, sublayer = self.conv_block(outputs)#, self.num_conv_layers, self.kernel_size, self.num_filters,
+                                                       # dropout=0, sublayers = (sublayer, total_sublayers))
 #             Attention mecanism : TODO later
 #             Note that the Feed forward part is made here
 #             outputs, sublayer = self.self_attention_block.forward(outputs, num_filters, seq_len, mask=mask,
@@ -105,8 +105,8 @@ def get_timing_signal_1d(length, channels, min_timescale=1.0, max_timescale=1.0e
     position = torch.range(0,length-1)
     position = position.type(torch.FloatTensor)
     num_timescales = channels // 2
-    print(channels)
-    print(num_timescales-1)
+    # print(channels)
+    # print(num_timescales-1)
     num_timescales = float(num_timescales)
     log_timescale_increment = (
         math.log(float(max_timescale) / float(min_timescale)) /
