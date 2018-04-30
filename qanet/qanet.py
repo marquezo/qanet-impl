@@ -8,21 +8,21 @@ from qanet.output import Output
 
 class QANet(nn.Module):
     ''' All-in-one wrapper for all modules '''
-    
+
     def __init__(self):
-        super(QAnet, self).__init__()
-        
+        super(QANet, self).__init__()
+
         self.InputEmbedding = InputEmbedding()
         self.EmbeddingEncoder = EmbeddingEncoder()
         self.ContextQueryAttention = ContextQueryAttention()
         self.ModelEncoder = ModelEncoder()
         self.Output = Output()
-        
+
     def forward(self, context, query):
-        
+
         context, query = self.InputEmbedding(context, query)
         context, query = self.EmbeddingEncoder(context, query)
-        
+
         context2query_attn, query2context_attn = self.ContextQueryAttention(context, query)
 
         # TODO: concatenate context2query_attn and query2context_attn to feed to ModelEncoder
