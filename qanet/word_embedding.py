@@ -17,6 +17,8 @@ class WordEmbedding(nn.Module):
         
         #self.word_embedding.weight[constants.UNK_ID].requires_grad = True
 
+        del word_embeddings
+
     def forward(self, input_context, input_question):
         
         context_word_emb = self.word_embedding(input_context)

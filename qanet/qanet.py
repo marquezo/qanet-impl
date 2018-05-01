@@ -35,6 +35,8 @@ class QANet(nn.Module):
         context_emb, question_emb = self.embeddingEncoder(context_emb, question_emb)
 
         c2q_attn, q2c_attn = self.contextQueryAttention(context_emb, question_emb)
+
+        del question_emb
         
         mdl_emb = torch.cat((context_emb, 
                    c2q_attn.permute(0, 2, 1), 
@@ -43,6 +45,8 @@ class QANet(nn.Module):
         
     
         M0, M1, M2 = self.modelEncoder(mdl_emb)
+
+        del mdl_emb
         
         # permuting to feed to output layer
         M0 = M0.permute(0, 2, 1)
