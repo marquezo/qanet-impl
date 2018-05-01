@@ -67,6 +67,14 @@ class SquadDataset(Dataset):
             self.question_raw_sorted.append(list_question_raw[i])
             self.spans_sorted.append(list_span[i])
 
+        del list_context
+        del list_questions
+        del list_span
+        del len_contexts
+        del list_context_raw
+        del list_question_raw
+        del pos_for_batch
+
     def __len__(self):
         return len(self.context_sorted)
 
@@ -105,5 +113,11 @@ class SquadDataset(Dataset):
 
         context_char_idx = np.concatenate((ctx4char, context_pad_char))
         question_char_idx =  np.concatenate((q4char, question_pad_char))
+
+        del context_pad_word
+        del question_pad_word
+        del context_pad_char
+        del question_pad_char
+        del ctx4char, q4char
 
         return context_word_idx, question_word_idx, context_char_idx, question_char_idx, self.spans_sorted[idx], context_raw, question_raw
