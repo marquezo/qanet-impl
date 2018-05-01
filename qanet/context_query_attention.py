@@ -54,7 +54,6 @@ class ContextQueryAttention(nn.Module):
         QSim = self.repeatRowsTensor(Q, self.n)
         # Create CSim (#batch x n*m x d) where C is reapted m times
         CSim = C.repeat(1, self.m, 1)
-        print(QSim.shape, CSim.shape)
         assert QSim.shape == CSim.shape
         QCSim = QSim * CSim
 

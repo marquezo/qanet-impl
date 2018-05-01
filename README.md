@@ -14,8 +14,13 @@ The various modules presented below are found in the **qanet** folder. The vario
         + Highway
     - EmbeddingEncoder
         + EncoderBlock
+        	* PositionEncoding
+        	* LayerNorm
+        	* SelfAttention
     - ContextQueryAttention
     - ModelEncoder
         + EncoderBlock
+        	* LayerNorm
+        	* SelfAttention
     - Output
 

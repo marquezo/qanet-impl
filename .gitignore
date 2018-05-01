@@ -3,3 +3,8 @@
 /data
 
 test.py
+
+# for datasets and pretrained embeddings
+glove.6B.300d.txt
+train-v1.1.json
+dev-v1.1.json

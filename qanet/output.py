@@ -3,7 +3,7 @@ from torch import nn
 
 class Output(nn.Module):
 
-    def __init__(self, input_dim=128):
+    def __init__(self, input_dim=512):
         super(Output, self).__init__()
 
         self.d = input_dim

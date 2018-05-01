@@ -4,7 +4,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.autograd import Variable
-from qanet.layer_normalization import LayerNormalization
+from qanet.layer_norm import LayerNorm1d
 
 # The class conv_block is equivalent to the conv_block method in the original source code
 class ConvolutionLayer(nn.Module):
@@ -12,7 +12,7 @@ class ConvolutionLayer(nn.Module):
                is_training = True, dropout = 0.0, sublayers = (1, 1), d=128):
         
         super(ConvolutionLayer, self).__init__()
-        self.layer_norm = LayerNormalization()
+        self.layer_norm = LayerNorm1d()
         # QUESTION : for depthwise convolution, we need to specify the group.
         # in tensorflow we have tf.nn.separable_conv2d function. but I can't see where the group is defined
         # temporarily put the groups value to 2 to make it work in the meantime

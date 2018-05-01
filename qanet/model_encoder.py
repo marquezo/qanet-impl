@@ -2,19 +2,25 @@
 # -*- coding: utf-8 -*-
 
 from torch import nn
-from qanet.residual_block import ResidualBlock, EncoderBlock
+from qanet.encoder_block import EncoderBlock
 
 class ModelEncoder(nn.Module):
     
-    def __init__(self, num_blocks=7, num_conv=2):
+    def __init__(self, num_blocks=7, num_conv=2, kernel_size=7, num_filters=512):
         super(ModelEncoder, self).__init__()
         
         self.num_blocks = num_blocks
         
-        self.stackedEncoderBlocks = nn.ModuleList([EncoderBlock(num_conv=num_conv) for i in range(num_blocks)])
+        self.stackedEncoderBlocks = nn.ModuleList([EncoderBlock(num_conv=num_conv,
+                                                                kernel_size=kernel_size,
+                                                                num_filters=num_filters) for i in range(num_blocks)])
         
         
     def forward(self, x):
+        
+        # x is the following concatenation : [c, a, c*a, c*b], where a and b are
+        # respectively a row of attention matrix A and B, c is a row of the 
+        # embedded context matrix
         
         # first stacked model encoder blocks
         for i in range(self.num_blocks):

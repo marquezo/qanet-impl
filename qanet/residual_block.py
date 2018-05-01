@@ -8,7 +8,7 @@ from qanet.convolution_layer import ConvolutionLayer
 class ResidualBlock(nn.Module):
     
     def __init__(self, num_blocks, num_conv_layers, kernel_size, mask=None,
-                 num_filters=128, input_projection=False, num_heads=8,
+                 num_filters=128, input_projection=True, num_heads=8,
                  seq_len=None, is_training=True, bias=True, dropout=0.0):
         super(ResidualBlock, self).__init__()
         
@@ -34,6 +34,7 @@ class ResidualBlock(nn.Module):
             # with 1d convolution, we will resize input from 500 to 128
             # TODO : check how to initialize weights and bias
             inputs = self.resize_convolution(inputs)
+            
         outputs = inputs
         sublayer = 1
         total_sublayers = (self.num_conv_layers + 2) * self.num_blocks
@@ -102,7 +103,7 @@ def get_timing_signal_1d(length, channels, min_timescale=1.0, max_timescale=1.0e
     Returns:
     a Tensor of timing signals [1, length, channels]
     """
-    position = torch.range(0,length-1)
+    position = torch.arange(0,length)
     position = position.type(torch.FloatTensor)
     num_timescales = channels // 2
     # print(channels)
@@ -112,7 +113,7 @@ def get_timing_signal_1d(length, channels, min_timescale=1.0, max_timescale=1.0e
         math.log(float(max_timescale) / float(min_timescale)) /
             (num_timescales - 1))
     inv_timescales = min_timescale * torch.exp(
-        torch.range(0,num_timescales-1) * -log_timescale_increment)
+        torch.arange(0,num_timescales) * -log_timescale_increment)
     scaled_time = position.unsqueeze(1) * inv_timescales.unsqueeze(0)
     signal = torch.cat([torch.sin(scaled_time), torch.cos(scaled_time)], 1)
 #     tf.pad(input, [padding line, padding column]) : https://www.tensorflow.org/api_docs/python/tf/pad. by default, pad with 0
@@ -121,4 +122,8 @@ def get_timing_signal_1d(length, channels, min_timescale=1.0, max_timescale=1.0e
     padding = nn.ConstantPad2d(0,0)
     signal = padding(signal)
     signal = signal.view(1,length, channels)
+    
+    if torch.cuda.is_available:
+        signal = signal.cuda()
     return signal
+
