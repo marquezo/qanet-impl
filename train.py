@@ -84,13 +84,19 @@ def train(model, train_loader, n_epochs=20, learning_rate=1e-3, betas=(0.8, 0.99
             
             print("Batch : %d / %d ----- Time remaining : %02d:%02d:%02.3f" % (batch_idx, n_batches, rem_h, rem_m, rem_s), end="\r")
             
-            if batch_idx != 0 and batch_idx % print_every == 0:
-                print("\nLoss : %.3f" % (total_loss / print_every))
+            if batch_idx % print_every == 0:
+                if batch_idx != 0 :
+                    loss_tracker.append(total_loss / print_every)
+                    print("\nLoss : %.3f" % (loss_tracker[-1]))
+                    np.savetxt('loss.txt', np.array(loss_tracker))
+                    plt.semilogy(loss_tracker)
+                    plt.xlabel('Update')
+                    plt.ylabel('Loss')
+                    plt.savefig('loss.png')
+                    plt.clf()
+                else:
+                    loss_tracker.append(total_loss)
                 total_loss = 0
-                plt.plot(loss_tracker)
-                plt.xlabel('Update')
-                plt.ylabel('Loss')
-                plt.savefig('loss.png')
                 
                 
 
