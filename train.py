@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
+import matplotlib.pyplot as plt
 import json
 import time
 
@@ -27,18 +28,22 @@ params_file = "params.json"
 word_embed_file = data_prefix + 'glove.trimmed.300d.npz'
 char_embed_file = data_prefix + 'char2ix.json'
 
-def train(model, train_loader, n_epochs=20, save_model=False):
+def train(model, train_loader, n_epochs=20, learning_rate=1e-3, betas=(0.8, 0.999),
+          batch_size=32, save_model=False, print_every=1000):
     if use_cuda:
         model = model.cuda()
     
     criterion = nn.CrossEntropyLoss()
-    optimizer = optim.Adam(filter(lambda p: p.requires_grad, model.parameters()))
+    optimizer = optim.Adam(filter(lambda p: p.requires_grad, model.parameters()),
+                           lr=learning_rate, betas=betas)
     
     for epoch in range(n_epochs):
         
         total_loss = 0
         n_batches = len(train_loader)
         start = time.time()
+        
+        loss_tracker = []
 
         for batch_idx, (context_word, question_word, context_char, question_char, spans, ctx_raw, q_raw) in enumerate(train_loader):
             
@@ -65,6 +70,7 @@ def train(model, train_loader, n_epochs=20, save_model=False):
             loss += criterion(p2, span_end)
             
             total_loss += loss.data[0]
+            loss_tracker.append(loss.data[0])
             
             loss.backward()
             optimizer.step()
@@ -77,9 +83,18 @@ def train(model, train_loader, n_epochs=20, save_model=False):
             rem_s = rem_time % 60
             
             print("Batch : %d / %d ----- Time remaining : %02d:%02d:%02.3f" % (batch_idx, n_batches, rem_h, rem_m, rem_s), end="\r")
+            
+            if batch_idx != 0 and batch_idx % print_every == 0:
+                print("\nLoss : %.3f" % (total_loss / print_every))
+                total_loss = 0
+                plt.plot(loss_tracker)
+                plt.xlabel('Update')
+                plt.ylabel('Loss')
+                plt.savefig('loss.png')
+                
+                
 
-        total_loss /= len(train_loader)
-        print("Epoch : %d ----- Loss : %.3f" % (epoch, total_loss))
+        print("Epoch : %d ----- Loss : %.3f" % (epoch, total_loss / len(train_loader)))
         
         if save_model:
             torch.save(model, 'qanet.pt')
@@ -108,7 +123,7 @@ if __name__ == "__main__":
                            file_span=data_prefix + 'train.span', 
                            char2ix_file=char_embed_file)
     
-    train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=True, num_workers=1)
+    train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=True, num_workers=0)
     
     model = QANet(params, embeddings, len(char2ix))
     
@@ -116,4 +131,5 @@ if __name__ == "__main__":
     del embeddings
     del char2ix
     
-    train(model, train_loader, save_model=True)
+    train(model, train_loader, n_epochs=n_epochs, learning_rate=learning_rate, 
+          betas=betas, batch_size=batch_size, save_model=True)
