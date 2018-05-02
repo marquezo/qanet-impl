@@ -41,8 +41,8 @@ class PositionEncoding(nn.Module):
         signal = signal.view(1,length, channels)
         
         # change this
-#        if torch.cuda.is_available():
-#            signal = signal.cuda()
+        if torch.cuda.is_available():
+            signal = signal.cuda()
 
         return x + signal
 

@@ -7,8 +7,6 @@ from qanet.context_query_attention import ContextQueryAttention
 from qanet.model_encoder import ModelEncoder
 from qanet.output import Output
 
-import sys
-
 class QANet(nn.Module):
     ''' All-in-one wrapper for all modules '''
 

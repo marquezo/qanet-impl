@@ -8,3 +8,6 @@ test.py
 glove.6B.300d.txt
 train-v1.1.json
 dev-v1.1.json
+
+# for the pretrained model
+qanet.pt
