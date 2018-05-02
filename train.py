@@ -70,7 +70,6 @@ def train(model, train_loader, n_epochs=20, learning_rate=1e-3, betas=(0.8, 0.99
             loss += criterion(p2, span_end)
             
             total_loss += loss.data[0]
-            loss_tracker.append(loss.data[0])
             
             loss.backward()
             optimizer.step()
