@@ -14,7 +14,6 @@ class WordEmbedding(nn.Module):
 
         # Only the unknown embedding requires grad
         self.word_embedding.weight.requires_grad = False
-        
         #self.word_embedding.weight[constants.UNK_ID].requires_grad = True
 
         del word_embeddings

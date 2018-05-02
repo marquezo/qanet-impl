@@ -6,15 +6,17 @@ from qanet.encoder_block import EncoderBlock
 
 class ModelEncoder(nn.Module):
     
-    def __init__(self, num_blocks=7, num_conv=2, kernel_size=7, num_filters=512):
+    def __init__(self, n_blocks=7, n_conv=2, kernel_size=7, padding=3,
+                 hidden_size=128, n_heads=8):
         super(ModelEncoder, self).__init__()
         
-        self.num_blocks = num_blocks
+        self.n_blocks = n_blocks
         
-        self.stackedEncoderBlocks = nn.ModuleList([EncoderBlock(num_conv=num_conv,
+        self.stackedEncoderBlocks = nn.ModuleList([EncoderBlock(n_conv=n_conv,
                                                                 kernel_size=kernel_size,
-                                                                num_filters=num_filters) for i in range(num_blocks)])
-        
+                                                                padding=padding,
+                                                                n_filters=hidden_size,
+                                                                n_heads=n_heads) for i in range(n_blocks)])
         
     def forward(self, x):
         
@@ -23,17 +25,17 @@ class ModelEncoder(nn.Module):
         # embedded context matrix
         
         # first stacked model encoder blocks
-        for i in range(self.num_blocks):
+        for i in range(self.n_blocks):
             x = self.stackedEncoderBlocks[i](x)
         M0 = x
         
         # second stacked model encoder blocks
-        for i in range(self.num_blocks):
+        for i in range(self.n_blocks):
             x = self.stackedEncoderBlocks[i](x)
         M1 = x
         
         # third stacked model encoder blocks
-        for i in range(self.num_blocks):
+        for i in range(self.n_blocks):
             x = self.stackedEncoderBlocks[i](x)
         M2 = x
         

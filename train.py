@@ -21,6 +21,11 @@ if use_cuda:
     torch.cuda.empty_cache()
 else:
     print("N0 :(")
+     
+data_prefix = 'data/'
+params_file = "params.json"
+word_embed_file = data_prefix + 'glove.trimmed.300d.npz'
+char_embed_file = data_prefix + 'char2ix.json'
 
 def train(model, train_loader, n_epochs=20, save_model=False):
     if use_cuda:
@@ -81,22 +86,31 @@ def train(model, train_loader, n_epochs=20, save_model=False):
 
 if __name__ == "__main__":
     
-    data_prefix = 'data/'
-    save_path = data_prefix + 'glove.trimmed.300d.npz'
-    char2ix_file = data_prefix + 'char2ix.json'
+    # load model parameters
+    with open(params_file) as f:
+        params = json.load(f)
+        
+    n_epochs = params["n_epochs"]
+    batch_size = params["batch_size"]
+    learning_rate = params["learning_rate"]
+    betas = (params["beta1"], params["beta2"])
     
-    with open(char2ix_file) as json_data:
+    embeddings = np.load(word_embed_file)['glove']
+    
+    with open(char_embed_file) as json_data:
         char2ix = json.load(json_data)
     
-    embeddings = np.load(save_path)['glove']
-    
     # loading dataset
-    dataset = SquadDataset(file_ids_ctx=data_prefix + 'train.context.ids', file_ids_q=data_prefix + 'train.question.ids',
-                          file_ctx =data_prefix + 'train.context', file_q=data_prefix + 'train.question', file_span=data_prefix + 'train.span', char2ix_file=char2ix_file)
+    dataset = SquadDataset(file_ids_ctx=data_prefix + 'train.context.ids', 
+                           file_ids_q=data_prefix + 'train.question.ids',
+                           file_ctx =data_prefix + 'train.context', 
+                           file_q=data_prefix + 'train.question', 
+                           file_span=data_prefix + 'train.span', 
+                           char2ix_file=char_embed_file)
     
-    train_loader = DataLoader(dataset, batch_size=8, shuffle=False, num_workers=1)
+    train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=True, num_workers=1)
     
-    model = QANet(embeddings, len(char2ix))
+    model = QANet(params, embeddings, len(char2ix))
     
     # save a bit of RAM
     del embeddings

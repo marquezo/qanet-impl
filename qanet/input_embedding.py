@@ -7,12 +7,20 @@ from qanet.highway import Highway
 
 class InputEmbedding(nn.Module):
     
-    def __init__(self, embeddings, num_chars):
+    def __init__(self, word_embeddings, n_char_embeddings, word_embed_dim=300,
+                 char_embed_dim=32, char_embed_n_filters=200, 
+                 char_embed_kernel_size=7, char_embed_pad=3, highway_n_layers=2):   
+        
         super(InputEmbedding, self).__init__()
         
-        self.wordEmbedding = WordEmbedding(embeddings)
-        self.characterEmbedding = CharacterEmbedding(num_chars)
-        self.highway = Highway()
+        self.wordEmbedding = WordEmbedding(word_embeddings)
+        self.characterEmbedding = CharacterEmbedding(n_char_embeddings,
+                                                     embedding_dim=char_embed_dim,
+                                                     n_filters=char_embed_n_filters,
+                                                     kernel_size=char_embed_kernel_size,
+                                                     padding=char_embed_pad)
+        self.highway = Highway(input_size = word_embed_dim + char_embed_n_filters,
+                               n_layers=highway_n_layers)
     
     def forward(self, context_w, question_w, context_char, question_char):
         

@@ -11,24 +11,24 @@ from qanet.self_attention import SelfAttention
 
 class EncoderBlock(nn.Module):
     
-    def __init__(self, num_conv, kernel_size, num_filters=128, num_heads=8):
+    def __init__(self, n_conv, kernel_size=7, padding=3, n_filters=128, n_heads=8):
         super(EncoderBlock, self).__init__()
 
-        self.num_conv = num_conv        
-        self.num_filters = num_filters
+        self.n_conv = n_conv        
+        self.n_filters = n_filters
         
         self.positionEncoding = PositionEncoding()
-        self.layerNorm = LayerNorm1d(num_features=num_filters)
-        self.conv = nn.ModuleList([nn.Conv1d(num_filters,num_filters,1,1,0,groups=2) for i in range(num_conv)])
+        self.layerNorm = LayerNorm1d(n_features=n_filters)
+        self.conv = nn.ModuleList([nn.Conv1d(n_filters,n_filters,1,1,0,groups=2) for i in range(n_conv)])
         self.selfAttention = SelfAttention()
-        self.fc = nn.Linear(in_features=num_filters, out_features=num_filters)
+        self.fc = nn.Linear(in_features=n_filters, out_features=n_filters)
         
     def forward(self, x):
         
         x = self.positionEncoding(x)
         
         # convolutional layers
-        for i in range(self.num_conv):
+        for i in range(self.n_conv):
             
             tmp = self.layerNorm(x)
             tmp = F.relu(self.conv[i](tmp))

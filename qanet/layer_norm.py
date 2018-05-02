@@ -4,15 +4,15 @@ import torch.nn as nn
 
 class LayerNorm1d(nn.Module):
 
-    def __init__(self, num_features=128, eps=1e-6, affine=True):
+    def __init__(self, n_features=128, eps=1e-6, affine=True):
         super(LayerNorm1d, self).__init__()
-        self.num_features = num_features
+        self.n_features = n_features
         self.affine = affine
         self.eps = eps
 
         if self.affine:
-            self.gamma = nn.Parameter(torch.Tensor(num_features).uniform_())
-            self.beta = nn.Parameter(torch.zeros(num_features))
+            self.gamma = nn.Parameter(torch.Tensor(n_features).uniform_())
+            self.beta = nn.Parameter(torch.zeros(n_features))
 
     def forward(self, x):
 

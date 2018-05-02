@@ -1,0 +1,36 @@
+{
+	"n_epochs": 20,
+	"batch_size": 8,
+	"learning_rate": 1e-4,
+	"beta1": 0.8,
+	"beta2": 0.999,
+
+	"word_embed_dim": 300,
+
+	"char_word_len": 16,
+	"char_embed_dim": 32,
+	"char_embed_n_filters": 200,
+	"char_embed_kernel_size": 7,
+	"char_embed_pad": 3,
+
+	"highway_n_layers": 2,
+
+	"hidden_size": 128,
+
+	"embed_encoder_resize_kernel_size": 7,
+	"embed_encoder_resize_pad": 3,
+
+	"embed_encoder_n_blocks": 1,
+	"embed_encoder_n_conv": 4,
+	"embed_encoder_kernel_size": 7,
+	"embed_encoder_pad": 3,
+	"embed_encoder_n_heads": 8,
+
+
+	"model_encoder_n_blocks": 7,
+	"model_encoder_n_conv": 2,
+	"model_encoder_kernel_size": 7,
+	"model_encoder_pad": 3,
+	"model_encoder_n_heads": 8
+
+}

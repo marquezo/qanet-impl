@@ -13,10 +13,10 @@ respectivement, query-to-contex and context-to-query de dim (#batch x n x d) les
 """
 class ContextQueryAttention(nn.Module):
 
-    def __init__(self, embed_size=128):
+    def __init__(self, hidden_size=128):
         super(ContextQueryAttention, self).__init__()
 
-        self.d = embed_size
+        self.d = hidden_size
 
         self.W0 = nn.Linear(3 * self.d, 1)
         # Initialize W0 with Xavier
