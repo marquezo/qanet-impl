@@ -79,9 +79,8 @@ def train(model, train_loader, n_epochs=20, learning_rate=1e-3, betas=(0.8, 0.99
             
             rem_h = int(rem_time // 3600)
             rem_m = int(rem_time // 60 - rem_h * 60)
-            rem_s = rem_time % 60
-            
-            print("Batch : %d / %d ----- Time remaining : %02d:%02d:%02.3f" % (batch_idx, n_batches, rem_h, rem_m, rem_s), end="\r")
+            rem_s = int(rem_time % 60)
+            print("Batch : %d / %d ----- Time remaining : %02d:%02d:%02d" % (batch_idx, n_batches, rem_h, rem_m, rem_s), end="\r")            
             
             if batch_idx % print_every == 0:
                 if batch_idx != 0 :

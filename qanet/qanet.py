@@ -32,7 +32,7 @@ class QANet(nn.Module):
         
         self.embed_encoder_n_blocks = params["embed_encoder_n_blocks"]
         self.embed_encoder_n_conv = params["embed_encoder_n_conv"]
-        self.embed_encoder_kernel_size = params["embed_encoder_n_blocks"]
+        self.embed_encoder_kernel_size = params["embed_encoder_kernel_size"]
         self.embed_encoder_pad = params["embed_encoder_pad"]
         self.embed_encoder_n_heads = params["embed_encoder_n_heads"]
 
