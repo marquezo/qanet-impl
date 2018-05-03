@@ -7,7 +7,7 @@ from qanet.encoder_block import EncoderBlock
 class ModelEncoder(nn.Module):
     
     def __init__(self, n_blocks=7, n_conv=2, kernel_size=7, padding=3,
-                 hidden_size=128, n_heads=8):
+                 hidden_size=128, conv_type='depthwise_separable', n_heads=8):
         super(ModelEncoder, self).__init__()
         
         self.n_blocks = n_blocks
@@ -16,6 +16,7 @@ class ModelEncoder(nn.Module):
                                                                 kernel_size=kernel_size,
                                                                 padding=padding,
                                                                 n_filters=hidden_size,
+                                                                conv_type=conv_type,
                                                                 n_heads=n_heads) for i in range(n_blocks)])
         
     def forward(self, x):
