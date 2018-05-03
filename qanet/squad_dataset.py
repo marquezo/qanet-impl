@@ -92,8 +92,8 @@ class SquadDataset(Dataset):
         context_pad_word = np.array([constants.PAD_ID] * (constants.MAX_CONTEXT - self.context_sorted[idx].shape[0]))
         question_pad_word = np.array([constants.PAD_ID] * (self.max_question_len - self.question_sorted[idx].shape[0]))
 
-        context_word_idx = np.concatenate((self.context_sorted[idx], context_pad_word))
-        question_word_idx = np.concatenate((self.question_sorted[idx], question_pad_word))
+        context_word_idx = np.concatenate((self.context_sorted[idx], context_pad_word)).astype(int)
+        question_word_idx = np.concatenate((self.question_sorted[idx], question_pad_word)).astype(int)
 
         #We need to return the character mapping also
         context_raw = self.context_raw_sorted[idx]
@@ -111,8 +111,8 @@ class SquadDataset(Dataset):
         context_pad_char = np.zeros((constants.MAX_CONTEXT - ctx4char.shape[0], ctx4char.shape[1]))
         question_pad_char = np.zeros((self.max_question_len - q4char.shape[0], q4char.shape[1]))
 
-        context_char_idx = np.concatenate((ctx4char, context_pad_char))
-        question_char_idx =  np.concatenate((q4char, question_pad_char))
+        context_char_idx = np.concatenate((ctx4char, context_pad_char)).astype(int)
+        question_char_idx =  np.concatenate((q4char, question_pad_char)).astype(int)
 
         del context_pad_word
         del question_pad_word
