@@ -36,15 +36,14 @@ def train(model, train_loader, n_epochs=20, learning_rate=1e-3, betas=(0.8, 0.99
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(filter(lambda p: p.requires_grad, model.parameters()),
                            lr=learning_rate, betas=betas)
-    
+
+    loss_tracker = []
     for epoch in range(n_epochs):
         
         total_loss = 0
         n_batches = len(train_loader)
         start = time.time()
         
-        loss_tracker = []
-
         for batch_idx, (context_word, question_word, context_char, question_char, spans, ctx_raw, q_raw) in enumerate(train_loader):
             
             optimizer.zero_grad()
@@ -92,7 +91,7 @@ def train(model, train_loader, n_epochs=20, learning_rate=1e-3, betas=(0.8, 0.99
                     plt.ylabel('Loss')
                     plt.savefig('loss.png')
                     plt.clf()
-                else:
+                elif epoch == 0:
                     loss_tracker.append(total_loss)
                 total_loss = 0
                 
