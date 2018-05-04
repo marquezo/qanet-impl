@@ -9,4 +9,5 @@ START_VOCAB = [_UNK, _PAD]
 MAX_CONTEXT = 400
 
 import torch
-use_cuda = torch.cuda.is_available()
+#use_cuda = torch.cuda.is_available()
+use_cuda = False

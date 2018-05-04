@@ -37,6 +37,7 @@ class QANet(nn.Module):
         self.embed_encoder_kernel_size = params["embed_encoder_kernel_size"]
         self.embed_encoder_pad = params["embed_encoder_pad"]
         self.embed_encoder_conv_type = params["embed_encoder_conv_type"]
+        self.embed_encoder_with_self_attn = params["embed_encoder_with_self_attn"]
         self.embed_encoder_n_heads = params["embed_encoder_n_heads"]
 
         self.model_encoder_n_blocks = params["model_encoder_n_blocks"]
@@ -44,6 +45,7 @@ class QANet(nn.Module):
         self.model_encoder_kernel_size = params["model_encoder_n_blocks"]
         self.model_encoder_pad = params["model_encoder_pad"]
         self.model_encoder_conv_type = params["model_encoder_conv_type"]
+        self.model_encoder_with_self_attn = params["model_encoder_with_self_attn"]
         self.model_encoder_n_heads = params["model_encoder_n_heads"]
 
         # Initializing model layers
@@ -66,6 +68,7 @@ class QANet(nn.Module):
                                                  kernel_size=self.embed_encoder_kernel_size,
                                                  padding=self.embed_encoder_pad,
                                                  conv_type=self.embed_encoder_conv_type,
+                                                 with_self_attn=self.embed_encoder_with_self_attn,
                                                  n_heads=self.embed_encoder_n_heads,
                                                  batch_size=self.batch_size)
 
@@ -77,7 +80,9 @@ class QANet(nn.Module):
                                          padding=self.model_encoder_pad,
                                          hidden_size=4*self.hidden_size,
                                          conv_type=self.model_encoder_conv_type,
-                                         n_heads=self.model_encoder_n_heads)
+                                         with_self_attn=self.model_encoder_with_self_attn,
+                                         n_heads=self.model_encoder_n_heads,
+                                         batch_size=self.batch_size)
         
         self.output = Output(input_dim=4*self.hidden_size)
 

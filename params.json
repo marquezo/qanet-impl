@@ -25,6 +25,7 @@
 	"embed_encoder_kernel_size": 7,
 	"embed_encoder_pad": 3,
 	"embed_encoder_conv_type": "depthwise_separable",
+	"embed_encoder_with_self_attn": true,
 	"embed_encoder_n_heads": 8,
 
 
@@ -33,6 +34,7 @@
 	"model_encoder_kernel_size": 7,
 	"model_encoder_pad": 3,
 	"model_encoder_conv_type": "depthwise_separable",
+	"model_encoder_with_self_attn": true,
 	"model_encoder_n_heads": 8
 
 }
