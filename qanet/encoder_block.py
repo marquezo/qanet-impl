@@ -24,11 +24,12 @@ class EncoderBlock(nn.Module):
         self.layerNorm = LayerNorm1d(n_features=n_filters)
         # sticking to normal convolutions for now
         if conv_type == 'normal':
-            self.conv = nn.ModuleList([nn.Conv1d(n_filters,n_filters,
+            self.conv = nn.ModuleList([nn.Conv1d(in_channels=n_filters, 
+                                                 out_channels=n_filters, 
                                                  kernel_size=kernel_size,
                                                  padding=padding) for i in range(n_conv)])
         elif conv_type == 'depthwise_separable':
-            self.conv = nn.ModuleList([DepthwiseSeparableConv1d(n_filters, n_filters,
+            self.conv = nn.ModuleList([DepthwiseSeparableConv1d(n_filters, 
                                                                 kernel_size=kernel_size,
                                                                 padding=padding) for i in range(n_conv)])
         if with_self_attn:
