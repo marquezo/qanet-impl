@@ -19,7 +19,7 @@ class EncoderBlock(nn.Module):
         self.n_conv = n_conv        
         self.n_filters = n_filters
         
-        self.positionEncoding = PositionEncoding()
+        self.positionEncoding = PositionEncoding(n_filters=n_filters)
         self.layerNorm = LayerNorm1d(n_features=n_filters)
         # sticking to normal convolutions for now
         if conv_type == 'normal':
