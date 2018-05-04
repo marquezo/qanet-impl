@@ -31,7 +31,7 @@ def F1_Score(pred, target, context_size=400):
         
         f1[i] = f1_score(tmp1, tmp2)
     
-    return f1.mean()
+    return f1.mean() * 100
 
 def EM_Score(pred, target):
     """
@@ -55,7 +55,7 @@ def EM_Score(pred, target):
     for i in range(batch_size):
         em[i] = torch.equal(pred[i], target[i])
 
-    return em.mean()   
+    return em.mean() * 100
     
 if __name__ == "__main__":
     

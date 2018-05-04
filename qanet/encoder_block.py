@@ -44,9 +44,9 @@ class EncoderBlock(nn.Module):
             x = tmp + x
     
         # self attention
-        tmp = self.layerNorm(x)
-        tmp = self.selfAttention(x)
-        x = tmp + x
+        # tmp = self.layerNorm(x)
+        # tmp = self.selfAttention(x)
+        # x = tmp + x
         
         # fully connected layer
         tmp = self.layerNorm(x)

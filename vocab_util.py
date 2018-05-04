@@ -155,7 +155,15 @@ def word2charix(word, char2ix, norm_word_length=16):
         word = word + (norm_word_length - len(word)) * ['<pad>']
 
     # converting characters to int in word list
-    word = [int(char2ix[char]) for char in word]
+    tmp = []
+    for i in range(len(word)):
+        
+        if word[i] in char2ix:
+            char = word[i]
+        else:
+            char = '<unk>'
+        tmp.append(int(char2ix[char]))
+    word = tmp
 
     return word
 

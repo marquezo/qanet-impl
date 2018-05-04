@@ -11,4 +11,4 @@ train-v1.1.json
 dev-v1.1.json
 
 # for the pretrained model
-qanet.pt
+*pt

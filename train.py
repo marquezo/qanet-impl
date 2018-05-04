@@ -14,6 +14,7 @@ from torch.utils.data import DataLoader
 
 from qanet.squad_dataset import SquadDataset
 from qanet.qanet import QANet
+from evaluate import evaluate
 
 use_cuda = torch.cuda.is_available()
 print("Is CUDA available?", end=' ')
@@ -28,7 +29,7 @@ params_file = "params.json"
 word_embed_file = data_prefix + 'glove.trimmed.300d.npz'
 char_embed_file = data_prefix + 'char2ix.json'
 
-def train(model, train_loader, n_epochs=20, learning_rate=1e-3, betas=(0.8, 0.999),
+def train(model, train_loader,dev_loader, n_epochs=20, learning_rate=1e-3, betas=(0.8, 0.999),
           batch_size=32, save_model=False, print_every=1000):
     if use_cuda:
         model = model.cuda()
@@ -94,13 +95,14 @@ def train(model, train_loader, n_epochs=20, learning_rate=1e-3, betas=(0.8, 0.99
                 elif epoch == 0:
                     loss_tracker.append(total_loss)
                 total_loss = 0
-                
-                
 
         print("Epoch : %d ----- Loss : %.3f" % (epoch, total_loss / len(train_loader)))
         
         if save_model:
             torch.save(model, 'qanet.pt')
+        
+        print("\nEvaluating model on dev set")
+        evaluate(model, dev_loader, batch_size=batch_size)
 
 if __name__ == "__main__":
     
@@ -119,14 +121,23 @@ if __name__ == "__main__":
         char2ix = json.load(json_data)
     
     # loading dataset
-    dataset = SquadDataset(file_ids_ctx=data_prefix + 'train.context.ids', 
-                           file_ids_q=data_prefix + 'train.question.ids',
-                           file_ctx =data_prefix + 'train.context', 
-                           file_q=data_prefix + 'train.question', 
-                           file_span=data_prefix + 'train.span', 
+    train_set = SquadDataset(file_ids_ctx=data_prefix + 'train.context.ids', 
+                             file_ids_q=data_prefix + 'train.question.ids',
+                             file_ctx =data_prefix + 'train.context', 
+                             file_q=data_prefix + 'train.question', 
+                             file_span=data_prefix + 'train.span', 
+                             char2ix_file=char_embed_file)
+    
+    train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True, num_workers=0)
+    
+    dev_set = SquadDataset(file_ids_ctx=data_prefix + 'dev.context.ids', 
+                           file_ids_q=data_prefix + 'dev.question.ids',
+                           file_ctx =data_prefix + 'dev.context', 
+                           file_q=data_prefix + 'dev.question', 
+                           file_span=data_prefix + 'dev.span', 
                            char2ix_file=char_embed_file)
     
-    train_loader = DataLoader(dataset, batch_size=batch_size, shuffle=True, num_workers=0)
+    dev_loader = DataLoader(dev_set, batch_size=batch_size, shuffle=False, num_workers=0)
     
     model = QANet(params, embeddings, len(char2ix))
     
@@ -134,5 +145,5 @@ if __name__ == "__main__":
     del embeddings
     del char2ix
     
-    train(model, train_loader, n_epochs=n_epochs, learning_rate=learning_rate, 
+    train(model, train_loader, dev_loader, n_epochs=n_epochs, learning_rate=learning_rate, 
           betas=betas, batch_size=batch_size, save_model=True)
