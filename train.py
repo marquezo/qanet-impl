@@ -7,7 +7,7 @@ import json
 import time
 
 import torch
-from torch import nn
+from torch import nn        
 from torch import optim
 from torch.autograd import Variable
 from torch.utils.data import DataLoader
@@ -15,8 +15,8 @@ from torch.utils.data import DataLoader
 from qanet.squad_dataset import SquadDataset
 from qanet.qanet import QANet
 from evaluate import evaluate
+from constants import use_cuda
 
-use_cuda = torch.cuda.is_available()
 print("Is CUDA available?", end=' ')
 if use_cuda:
     print("Yes!")

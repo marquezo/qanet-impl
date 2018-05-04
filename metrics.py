@@ -19,7 +19,7 @@ def F1_Score(pred, target, context_size=400):
     f1     : scalar
         F1 score averaged over the batch_size
     """
-    batch_size = pred.shape[0]
+    batch_size = target.shape[0]
     f1 = torch.zeros(batch_size)
     
     for i in range(batch_size):
@@ -49,7 +49,8 @@ def EM_Score(pred, target):
     em     : scalar
         EM score averaged over the batch_size
     """
-    batch_size = pred.shape[0]
+    
+    batch_size = target.shape[0]
     em = torch.zeros(batch_size)
     
     for i in range(batch_size):

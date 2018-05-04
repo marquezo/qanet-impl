@@ -8,14 +8,13 @@ from torch.utils.data import DataLoader
 from qanet.qanet import QANet
 from qanet.squad_dataset import SquadDataset
 from metrics import F1_Score, EM_Score
+from constants import use_cuda
 
 import json
 import numpy as np
 import time
 import sys
 
-use_cuda = torch.cuda.is_available()
-     
 data_prefix = 'data/'
 params_file = "params.json"
 word_embed_file = data_prefix + 'glove.trimmed.300d.npz'
@@ -60,8 +59,9 @@ def evaluate(model, dev_loader, batch_size=8):
         p_matrix = torch.bmm(p1.unsqueeze(2), p2.unsqueeze(1))
 
         pred_spans = torch.zeros(batch_size, 2).long()
+        n_items = p_matrix.shape[0]
         # no support for batch triu in pytorch currently
-        for i in range(batch_size):
+        for i in range(n_items):
             p_matrix[i] = torch.triu(p_matrix[i])
             
             tmp = np.argmax(p_matrix[i].data.numpy())

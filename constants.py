@@ -7,3 +7,6 @@ PAD_ID = 1
 START_VOCAB = [_UNK, _PAD]
 
 MAX_CONTEXT = 400
+
+import torch
+use_cuda = torch.cuda.is_available()
