@@ -13,6 +13,8 @@ class QANet(nn.Module):
     def __init__(self, params, word_embeddings, n_char_embeddings):
         super(QANet, self).__init__()
         
+        self.batch_size = params["batch_size"]
+        
         # Defining dimensions using data from the params.json file
         self.word_embed_dim = params["word_embed_dim"]
         
@@ -64,7 +66,8 @@ class QANet(nn.Module):
                                                  kernel_size=self.embed_encoder_kernel_size,
                                                  padding=self.embed_encoder_pad,
                                                  conv_type=self.embed_encoder_conv_type,
-                                                 n_heads=self.embed_encoder_n_heads)
+                                                 n_heads=self.embed_encoder_n_heads,
+                                                 batch_size=self.batch_size)
 
         self.contextQueryAttention = ContextQueryAttention(hidden_size=self.hidden_size)
         

@@ -1,6 +1,7 @@
 /__pycache__
 /.spyproject
 /data
+/qanet/__pycache__
 
 test.py
 

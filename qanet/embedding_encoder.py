@@ -7,7 +7,7 @@ class EmbeddingEncoder(nn.Module):
     
     def __init__(self, resize_in=500, hidden_size=128, resize_kernel=7, resize_pad=3,
                  n_blocks=1, n_conv=4, kernel_size=7, padding=3, 
-                 conv_type='depthwise_separable', n_heads=8):
+                 conv_type='depthwise_separable', n_heads=8, batch_size=32):
         super(EmbeddingEncoder, self).__init__()
         
         self.n_blocks = n_blocks
@@ -27,7 +27,8 @@ class EmbeddingEncoder(nn.Module):
                                                                 padding=padding,
                                                                 n_filters=hidden_size,
                                                                 conv_type=conv_type,
-                                                                n_heads=n_heads) for i in range(n_blocks)])
+                                                                n_heads=n_heads,
+                                                                batch_size=batch_size) for i in range(n_blocks)])
     
     def forward(self, context_emb, question_emb):
         

@@ -4,6 +4,7 @@ import math
 import torch
 import torch.nn as nn
 from qanet.convolution_layer import ConvolutionLayer
+from qanet.self_attention import SelfAttention
 
 class ResidualBlock(nn.Module):
     
@@ -26,7 +27,12 @@ class ResidualBlock(nn.Module):
         
         # Input size, output size, kernel size, stride, padding
         self.resize_convolution = nn.Conv1d(500,128,1,1,0)
-        self.conv_block = ConvolutionLayer(num_conv_layers=num_conv_layers, kernel_size=kernel_size, num_filters=num_filters)
+        self.conv_block = ConvolutionLayer(num_conv_layers=num_conv_layers, 
+                                           kernel_size=kernel_size, num_filters=num_filters, 
+                                           dropout=dropout, is_training=is_training, bias=bias)
+        self.self_attention = SelfAttention(num_filters=num_filters, seq_len=seq_len, 
+                                              dropout=dropout, mask=mask, num_heads=num_heads,
+                                              is_training=is_training, bias=bias)
 
         
     def forward(self, inputs):
@@ -40,14 +46,8 @@ class ResidualBlock(nn.Module):
         total_sublayers = (self.num_conv_layers + 2) * self.num_blocks
         for i in range(self.num_blocks):
             outputs = add_timing_signal_1d(outputs)
-            outputs, sublayer = self.conv_block(outputs)#, self.num_conv_layers, self.kernel_size, self.num_filters,
-                                                       # dropout=0, sublayers = (sublayer, total_sublayers))
-#             Attention mecanism : TODO later
-#             Note that the Feed forward part is made here
-#             outputs, sublayer = self.self_attention_block.forward(outputs, num_filters, seq_len, mask=mask,
-#                                                                  num_heads=num_heads, is_training=is_training,
-#                                                                  bias=bias, dropout=dropout,sublayers=(sublayer,total_sublayers))
-
+            outputs, sublayer = self.conv_block(outputs, (sublayer, total_sublayers))
+            outputs, sublayer = self.self_attention(outputs, (sublayer, total_sublayers))
         return outputs
 
 # this method allow attention to learn to use absolute and relative positions

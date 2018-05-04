@@ -13,7 +13,7 @@ from qanet.depthwise_separable_conv import DepthwiseSeparableConv1d
 class EncoderBlock(nn.Module):
     
     def __init__(self, n_conv, kernel_size=7, padding=3, n_filters=128, n_heads=8,
-                 conv_type='depthwise_separable'):
+                 conv_type='depthwise_separable', batch_size=32):
         super(EncoderBlock, self).__init__()
 
         self.n_conv = n_conv        
@@ -30,7 +30,7 @@ class EncoderBlock(nn.Module):
             self.conv = nn.ModuleList([DepthwiseSeparableConv1d(n_filters=n_filters,
                                                                 kernel_size=kernel_size,
                                                                 padding=padding) for i in range(n_conv)])
-        self.selfAttention = SelfAttention()
+        self.selfAttention = SelfAttention(batch_size, n_heads, n_filters)
         self.fc = nn.Linear(in_features=n_filters, out_features=n_filters)
         
     def forward(self, x):
