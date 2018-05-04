@@ -5,6 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import json
 import time
+import sys
 
 import torch
 from torch import nn        
@@ -139,7 +140,11 @@ if __name__ == "__main__":
     
     dev_loader = DataLoader(dev_set, batch_size=batch_size, shuffle=False, num_workers=0)
     
-    model = QANet(params, embeddings, len(char2ix))
+    if len(sys.argv) == 2:
+    	#resuming training of model
+    	model = torch.load(sys.argv[-1])
+    else:
+    	model = QANet(params, embeddings, len(char2ix))
     
     # save a bit of RAM
     del embeddings

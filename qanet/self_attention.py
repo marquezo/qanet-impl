@@ -5,6 +5,7 @@ import numpy as np
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.autograd import Variable
+from constants import use_cuda
 
 # Multi-head attention mechanism as defined in Vaswani et al. 2017
 class SelfAttention(nn.Module):
@@ -26,6 +27,8 @@ class SelfAttention(nn.Module):
         l = x.shape[1]
         
         heads = Variable(torch.zeros(self.n_heads, self.batch_size, l, self.value_dim))
+        if use_cuda:
+            heads = heads.cuda()
 
         for i in range(self.n_heads):
             Q = self.fc_query[i](x)
