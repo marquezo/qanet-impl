@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 import constants
 
 class WordEmbedding(nn.Module):
@@ -21,6 +22,11 @@ class WordEmbedding(nn.Module):
     def forward(self, input_context, input_question):
         
         context_word_emb = self.word_embedding(input_context)
+
+        context_word_emb = F.dropout(context_word_emb, p=0.1, training=self.training)
+
         question_word_emb = self.word_embedding(input_question)
+
+        question_word_emb = F.dropout(question_word_emb, p=0.1, training=self.training)
         
         return context_word_emb, question_word_emb

@@ -40,4 +40,6 @@ class CharacterEmbedding(nn.Module):
         # max pooling over word length to have final tensor
         x, _ = torch.max(x, dim=2)
 
+        x = F.dropout(x, p=0.05, training=self.training)
+
         return x
