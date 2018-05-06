@@ -39,6 +39,8 @@ def evaluate(model, dev_loader, batch_size=8):
         question_word = Variable(question_word)
         context_char = Variable(context_char.long())
         question_char = Variable(question_char.long())
+        
+
         span_begin = Variable(spans[:,0])
         span_end = Variable(spans[:,1])
         
@@ -71,12 +73,25 @@ def evaluate(model, dev_loader, batch_size=8):
     
         del p_matrix
         
-        em = EM_Score(pred_spans, spans)
-        f1 = F1_Score(pred_spans, spans)
-        
-        em_total += em
-        f1_total += f1
-        
+        for i in range(n_items):
+            em_max = 0
+            f1_max = 0
+            for j in range(len(spans)//2):
+                curr = spans[i,2*j:2*(j+1)]
+                if curr[0] == -1:
+                    continue
+                
+                em_tmp = EM_Score(pred_spans[i], curr)
+                f1_tmp = F1_Score(pred_spans[i], curr)
+                
+                if em_tmp > em_max:
+                    em_max = em_tmp
+                if f1_tmp > f1_max:
+                    f1_max = f1_tmp
+            
+            em_total += em_max
+            f1_total += f1_max
+            
         rem_time = (time.time()-start) * (n_batches-batch_idx + 1) / (batch_idx + 1)
         
         rem_h = int(rem_time // 3600)
@@ -84,8 +99,14 @@ def evaluate(model, dev_loader, batch_size=8):
         rem_s = int(rem_time % 60)
         print("Batch : %d / %d ----- Time remaining : %02d:%02d:%02d" % (batch_idx, n_batches, rem_h, rem_m, rem_s), end="\r")  
 
-    em_total /= len(dev_loader)
-    f1_total /= len(dev_loader)
+        if batch_idx == 1000:
+            break
+
+#    em_total /= (len(dev_loader) * batch_size)
+#    f1_total /= (len(dev_loader) * batch_size)
+            
+    em_total /= (1000 * batch_size)
+    f1_total /= (1000 * batch_size)        
 
     print()
     print("EM Score : %f" % em_total)
@@ -105,11 +126,18 @@ if __name__ == "__main__":
     batch_size = params["batch_size"]
         
     # loading dataset
-    dataset = SquadDataset(file_ids_ctx=data_prefix + 'dev.context.ids', 
-                           file_ids_q=data_prefix + 'dev.question.ids',
-                           file_ctx =data_prefix + 'dev.context', 
-                           file_q=data_prefix + 'dev.question', 
-                           file_span=data_prefix + 'dev.span', 
+#    dataset = SquadDataset(file_ids_ctx=data_prefix + 'dev.context.ids', 
+#                           file_ids_q=data_prefix + 'dev.question.ids',
+#                           file_ctx =data_prefix + 'dev.context', 
+#                           file_q=data_prefix + 'dev.question', 
+#                           file_span=data_prefix + 'dev.span', 
+#                           char2ix_file=char_embed_file)
+
+    dataset = SquadDataset(file_ids_ctx=data_prefix + 'train.context.ids', 
+                           file_ids_q=data_prefix + 'train.question.ids',
+                           file_ctx =data_prefix + 'train.context', 
+                           file_q=data_prefix + 'train.question', 
+                           file_span=data_prefix + 'train.span', 
                            char2ix_file=char_embed_file)
     
     dev_loader = DataLoader(dataset, batch_size=batch_size, shuffle=True, num_workers=0)

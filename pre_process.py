@@ -2,7 +2,7 @@ from __future__ import print_function
 import numpy as np
 import os
 import random
-from parse_json import data_from_json, read_write_dataset
+from parse_json import data_from_json, read_write_dataset, read_write_dev_dataset
 from vocab_util import create_vocabulary, initialize_vocabulary, process_glove, data_to_token_ids, create_vocab2charix_dict
 import json
 import argparse
@@ -50,7 +50,7 @@ if __name__ == '__main__':
         os.makedirs(data_prefix)
 
     train_num_questions, train_num_answers = read_write_dataset(train_data, 'train', data_prefix)
-    dev_num_questions, dev_num_answers = read_write_dataset(dev_data, 'dev', data_prefix)
+    dev_num_questions, dev_num_answers = read_write_dev_dataset(dev_data, 'dev', data_prefix)
     create_vocabulary(vocab_path, [train_context_path, train_question_path])
     vocab, rev_vocab = initialize_vocabulary(vocab_path)
     process_glove(glove_file_path, rev_vocab, save_path)
