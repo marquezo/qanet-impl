@@ -2,6 +2,7 @@
 
 import torch
 from sklearn.metrics import f1_score
+import sys
 
 def F1_Score(pred, target, context_size=400):
     """
@@ -19,19 +20,16 @@ def F1_Score(pred, target, context_size=400):
     f1     : scalar
         F1 score averaged over the batch_size
     """
-    batch_size = target.shape[0]
-    f1 = torch.zeros(batch_size)
     
-    for i in range(batch_size):
-        tmp1 = torch.zeros(context_size)
-        tmp2 = torch.zeros(context_size)
-        
-        tmp1[pred[i,0]:pred[i,1]+1] = 1
-        tmp2[target[i,0]:target[i,1]+1] = 1
-        
-        f1[i] = f1_score(tmp1, tmp2)
+    tmp1 = torch.zeros(context_size)
+    tmp2 = torch.zeros(context_size)
     
-    return f1.mean() * 100
+    tmp1[pred[0]:pred[1]+1] = 1
+    tmp2[target[0]:target[1]+1] = 1
+        
+    f1 = f1_score(tmp1, tmp2)
+    
+    return f1 * 100
 
 def EM_Score(pred, target):
     """
@@ -39,9 +37,9 @@ def EM_Score(pred, target):
     
     Parameters
     ----------
-    pred   : torch.LongTensor, shape=(batch_size, 2)
+    pred   : torch.LongTensor, shape=(2)
         Beginning and end of predicted spans for each element of a batch
-    target : torch.LongTensor, shape=(batch_size, 2)
+    target : torch.LongTensor, shape=(2)
         Beginning and end of target spans for each element of a batch
         
     Returns
@@ -50,13 +48,9 @@ def EM_Score(pred, target):
         EM score averaged over the batch_size
     """
     
-    batch_size = target.shape[0]
-    em = torch.zeros(batch_size)
-    
-    for i in range(batch_size):
-        em[i] = torch.equal(pred[i], target[i])
+    em = torch.equal(pred, target)
 
-    return em.mean() * 100
+    return em * 100
     
 if __name__ == "__main__":
     

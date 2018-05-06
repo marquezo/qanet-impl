@@ -122,20 +122,20 @@ if __name__ == "__main__":
         char2ix = json.load(json_data)
     
     # loading dataset
-    train_set = SquadDataset(file_ids_ctx=data_prefix + 'train.context.ids', 
-                             file_ids_q=data_prefix + 'train.question.ids',
-                             file_ctx =data_prefix + 'train.context', 
-                             file_q=data_prefix + 'train.question', 
-                             file_span=data_prefix + 'train.span', 
+    train_set = SquadDataset(file_ids_ctx=data_prefix + 'train1.context.ids', 
+                             file_ids_q=data_prefix + 'train1.question.ids',
+                             file_ctx =data_prefix + 'train1.context', 
+                             file_q=data_prefix + 'train1.question', 
+                             file_span=data_prefix + 'train1.span', 
                              char2ix_file=char_embed_file)
     
-    train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True, num_workers=0)
+    train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=False, num_workers=0)
     
-    dev_set = SquadDataset(file_ids_ctx=data_prefix + 'dev.context.ids', 
-                           file_ids_q=data_prefix + 'dev.question.ids',
-                           file_ctx =data_prefix + 'dev.context', 
-                           file_q=data_prefix + 'dev.question', 
-                           file_span=data_prefix + 'dev.span', 
+    dev_set = SquadDataset(file_ids_ctx=data_prefix + 'dev1.context.ids', 
+                           file_ids_q=data_prefix + 'dev1.question.ids',
+                           file_ctx =data_prefix + 'dev1.context', 
+                           file_q=data_prefix + 'dev1.question', 
+                           file_span=data_prefix + 'dev1.span', 
                            char2ix_file=char_embed_file)
     
     dev_loader = DataLoader(dev_set, batch_size=batch_size, shuffle=False, num_workers=0)

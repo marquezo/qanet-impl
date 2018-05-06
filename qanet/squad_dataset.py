@@ -17,6 +17,7 @@ class SquadDataset(Dataset):
         list_context = []
         list_questions = []
         self.max_question_len = 0
+        self.max_num_answers = 0
         len_contexts = []
 
         list_context_raw = []
@@ -49,11 +50,14 @@ class SquadDataset(Dataset):
 
                 if question_array.shape[0] > self.max_question_len:
                     self.max_question_len = question_array.shape[0]
+                    
+                if len(spans) > self.max_num_answers:
+                    self.max_num_answers = len(spans)
 
                 len_contexts.append(context_array.shape[0])
 
         pos_for_batch = np.argsort(len_contexts)
-
+        
         self.context_sorted = []
         self.question_sorted = []
         self.context_raw_sorted = []
@@ -113,6 +117,10 @@ class SquadDataset(Dataset):
 
         context_char_idx = np.concatenate((ctx4char, context_pad_char)).astype(int)
         question_char_idx =  np.concatenate((q4char, question_pad_char)).astype(int)
+        
+        # for spans (pad is negative)
+        span_pad = np.array([-1] * (self.max_num_answers - self.spans_sorted[idx].shape[0]))
+        span_final = np.concatenate((self.spans_sorted[idx], span_pad)).astype(int)
 
         del context_pad_word
         del question_pad_word
@@ -120,4 +128,4 @@ class SquadDataset(Dataset):
         del question_pad_char
         del ctx4char, q4char
 
-        return context_word_idx, question_word_idx, context_char_idx, question_char_idx, self.spans_sorted[idx], context_raw, question_raw
+        return context_word_idx, question_word_idx, context_char_idx, question_char_idx, span_final, context_raw, question_raw
