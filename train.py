@@ -31,16 +31,18 @@ word_embed_file = data_prefix + 'glove.trimmed.300d.npz'
 char_embed_file = data_prefix + 'char2ix.json'
 
 def train(model, train_loader,dev_loader, n_epochs=20, learning_rate=1e-3, betas=(0.8, 0.999),
-          batch_size=32, save_model=False, print_every=1000):
+          weight_decay=3e-7, batch_size=32, save_model=False, print_every=1000):
     if use_cuda:
         model = model.cuda()
     
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(filter(lambda p: p.requires_grad, model.parameters()),
-                           lr=learning_rate, betas=betas)
+                           lr=learning_rate, betas=betas, weight_decay=weight_decay)
 
     loss_tracker = []
     for epoch in range(n_epochs):
+        
+        model.train()
         
         total_loss = 0
         n_batches = len(train_loader)
@@ -115,6 +117,7 @@ if __name__ == "__main__":
     batch_size = params["batch_size"]
     learning_rate = params["learning_rate"]
     betas = (params["beta1"], params["beta2"])
+    weight_decay = params["weight_decay"]
     
     embeddings = np.load(word_embed_file)['glove']
     

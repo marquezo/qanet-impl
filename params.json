@@ -4,6 +4,7 @@
 	"learning_rate": 1e-4,
 	"beta1": 0.8,
 	"beta2": 0.999,
+	"weight_decay": 3e-7,
 
 	"word_embed_dim": 300,
 
